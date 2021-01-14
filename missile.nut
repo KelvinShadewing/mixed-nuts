@@ -6,12 +6,25 @@ donut("std/actors.nut");
 	vspeed = 0.0;
 	smoketimer = 5;
 
+	constructor(_x, _y)
+	{
+		x = _x;
+		y = _y;
+
+		local dir = pointAngle(x, y, mouseX(), mouseY());
+		dir -= 10;
+		dir += randInt(20);
+
+		hspeed = -lendirX(4, dir);
+		vspeed = -lendirY(4, dir);
+	}
+
 	function run()
 	{
 		if(smoketimer > 0) smoketimer--;
 		else
 		{
-			smoketimer = 5;
+			smoketimer = 2;
 			newActor(Smoke, x, y);
 		};
 
@@ -19,6 +32,30 @@ donut("std/actors.nut");
 		local dir = pointAngle(x, y, mouseX(), mouseY());
 		hspeed += lendirX(0.5, dir);
 		vspeed += lendirY(0.5, dir);
+
+		//Cap speed
+		if(distance2(0, 0, hspeed, vspeed) > 8)
+		{
+			dir = pointAngle(0, 0, hspeed, vspeed);
+			hspeed = lendirX(8, dir);
+			vspeed = lendirY(8, dir);
+		};
+
+		foreach(i in actor)
+		{
+			if(typeof i == "Missile")
+			{
+				if(i.id != id)
+				{
+					if(distance2(x, y, i.x, i.y) < 16)
+					{
+						dir = pointAngle(x, y, i.x, i.y);
+						hspeed -= lendirX(1, dir);
+						vspeed -= lendirY(1, dir);
+					};
+				};
+			};
+		};
 
 		x += hspeed;
 		y += vspeed;
@@ -28,6 +65,8 @@ donut("std/actors.nut");
 
 		if(distance2(x, y, mouseX(), mouseY()) <= 8) deleteActor(id);
 	};
+
+	function _typeof() {return "Missile";};
 };
 
 ::Smoke <- class extends Actor
@@ -36,6 +75,8 @@ donut("std/actors.nut");
 
 	function run()
 	{
+		setDrawColor(0xffffff80);
+		drawCircle(x, y, r, true);
 		r -= 0.5;
 		if(r <= 0) deleteActor(id);
 	};
