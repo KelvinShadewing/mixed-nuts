@@ -1,4 +1,5 @@
 donut("std/actors.nut");
+setResolution(640, 360);
 
 ::Missile <- class extends Actor
 {
@@ -15,8 +16,8 @@ donut("std/actors.nut");
 		dir -= 10;
 		dir += randInt(20);
 
-		hspeed = -lendirX(4, dir);
-		vspeed = -lendirY(4, dir);
+		hspeed = -lendirX(6, dir);
+		vspeed = -lendirY(6, dir);
 	}
 
 	function run()
@@ -86,9 +87,11 @@ donut("std/actors.nut");
 
 while(!quit)
 {
+	setDrawColor(0xff0000ff);
+	drawCircle(320, 180, 4, true);
 	setDrawColor(0xff00ff);
 	drawCircle(mouseX(), mouseY(), 4, true);
-	if(keyPress(k_space)) newActor(Missile, 160, 120);
+	if(keyDown(k_space)) newActor(Missile, 320, 180);
 	if(keyPress(k_escape)) quit = true;
 	runActors();
 	update();
